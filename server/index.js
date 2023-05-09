@@ -17,7 +17,8 @@ app.get('/',(req, res) => {
 });
 
 app.get('/dbTest', (req, res) => {
-  con.query('SELECT * FROM test0001', function (err, rows, fields) {
+  con.query('select postUser, count(postUser) as likeCount from PostMessage where postDate between 20230501 and 20230531 group by postUser order by count(postUser) desc'
+  , function (err, rows, fields) {
     if(err){console.log('err: ' + err);}
     res.json({dbData:rows});
     console.log(rows);
