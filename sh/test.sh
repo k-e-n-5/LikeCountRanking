@@ -31,19 +31,14 @@ while read -r line; do
   let postId=${fields[0]}
   postUser=${fields[1]}
   address=${fields[2]}
-  let likeCount=${fields[3]}
-  postDate=${fields[4]}
-
-  echo $postId
-  echo $postUser
-  echo $address
-  echo $likeCount
-  echo $postDate
+  content=${fields[3]}
+  let likeCount=${fields[4]}
+  postDate=${fields[5]}
 
   # データベースに登録する
   #mysql -u"$mysql_user" -p"$mysql_password" -h"$mysql_host" -D"$mysql_database" \
   mysql -u $mysql_user -D $mysql_database \
-  -e "INSERT INTO PostMessage (postId, postUser, address, likeCount, postDate) VALUES ($postId, '$postUser', '$address' , $likeCount, '$postDate')"
+  -e "INSERT INTO PostMessage (postId, postUser, address, content, likeCount, postDate) VALUES ($postId, '$postUser', '$address' , '$content', $likeCount, '$postDate')"
 
 done < $tmpFile
 
