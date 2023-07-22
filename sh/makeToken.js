@@ -33,25 +33,25 @@ async function executeQuery() {
           connection.query(`SELECT * FROM Users WHERE user = '${aRecordKey}'`, async function (error, results, fields) {
             if (error) reject(error);
 
-            const bRecord = [];
-
             // Usersテーブルに存在する場合の処理
             if (results.length > 0) {
-              bRecord = results[0];
-              const receiptAccount = bRecord.wallet;
+              const bRecord = results[0];
+              receiptAccount = bRecord.wallet;
               console.log(receiptAccount + "に処理を行います。");
             } else {
               // Usersテーブルに存在しない場合の処理
               const createAccount = require('./makeWallet.js');
               try {
-                const receiptAccount = await createAccount(aRecordKey);
+                receiptAccount = await createAccount(aRecordKey);
                 console.log(receiptAccount + "に処理を行います。");
               } catch (error) {
                 reject(error);
               }
             }
+
             // トークン発行処理
-            web3.eth.getTransactionCount(fromAccount).then((nonce) => {
+            try {
+              const nonce = await web3.eth.getTransactionCount(fromAccount);
               const data = contractInstance.methods.mint(receiptAccount, web3.utils.toWei(amount.toString(), 'ether')).encodeABI();
               const tx = {
                 nonce: nonce,
@@ -63,22 +63,22 @@ async function executeQuery() {
                 data: data,
                 from: fromAccount,
               };
-              web3.eth.accounts.signTransaction(tx, fromAccountPVKey).then((signedTx) => {
-                web3.eth.sendSignedTransaction(signedTx.rawTransaction).on('receipt', (receipt) => {
-                  console.log(`Transaction hash: ${receipt.transactionHash}`);
 
-                  // tokenFlg更新
-                  updateTokenFlag(bRecord.postId).then(() => {
-                    resolve();
-                  }).catch((error) => {
-                    reject(`Failed to update tokenFlg: ${error}`);
-                  });
-                });
-              }).catch((error) => {
-                reject(`Failed to mint tokens: ${error}`);
+              const signedTx = await web3.eth.accounts.signTransaction(tx, fromAccountPVKey);
+              const receipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction).on('receipt', (receipt) => {
+                console.log(`Transaction hash: ${receipt.transactionHash}`);
               });
-            });
-            resolve(); // レコードの処理が完了したことを通知
+
+              // tokenFlg更新
+              await updateTokenFlag(aRecord.postId);
+
+              console.log('処理が完了しました');
+
+              resolve(); // レコードの処理が完了したことを通知
+            } catch (error) {
+              console.error(`Error in executeQuery: ${error}`);
+              reject(`Failed to mint tokens: ${error}`);
+            }            
           });
         });
       }
@@ -90,7 +90,7 @@ async function executeQuery() {
 // tokenFlg更新
 async function updateTokenFlag(recordId) {
   return new Promise((resolve, reject) => {
-    connection.query(`UPDATE PostMessage SET tokenFlg = 1 WHERE id = ${recordId}`, function (error, results, fields) {
+    connection.query(`UPDATE PostMessage SET tokenFlg = 1 WHERE postId = ${recordId}`, function (error, results, fields) {
       if (error) reject(error);
       resolve();
     });
