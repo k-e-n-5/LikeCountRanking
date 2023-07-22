@@ -1,0 +1,62 @@
+
+.style_a {
+  text-align: center;
+  font-family: 'Lato', sans-serif;
+}
+.style_b {
+  text-align: center;
+  font-family: 'Lato', sans-serif;
+  font-size: 20px;
+}
+
+ul {
+  list-style:none;
+  }
+
+.li_top {
+  border: 3px solid #4b1a1a;
+  width: 400px;
+  margin: auto;
+  background-color: #f8baba;
+  font-weight: bold;
+}
+.li_next {
+  width: 400px;
+  margin: auto;
+  border-left: 3px solid #4b1a1a;
+  border-right: 3px solid #4b1a1a;
+  border-bottom: 3px solid #4b1a1a;
+}
+
+.span1 {
+  float: left;
+  padding: 10px;
+}
+
+.span2 {
+display: inline-block;
+margin-left: 50px;
+padding: 10px;
+border-left: 3px solid #4b1a1a;
+}
+
+.span3 {
+  display: inline-block;
+  margin-left: 0px;
+  padding: 10px;
+  border-left: 3px solid #4b1a1a;
+  }
+
+th,td {
+    border: solid 2px;              /* 枠線指定 */
+    padding: 7px;
+}
+table {
+  border-collapse:  collapse;     /* セルの線を重ねる */
+  margin:auto
+}
+
+.h_table{
+  background-color:#f8baba
+}
+
