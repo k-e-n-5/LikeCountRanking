@@ -49,7 +49,7 @@ async function executeQuery() {
               }
             }
             // トークン発行処理
-            /*web3.eth.getTransactionCount(fromAccount).then((nonce) => {
+            web3.eth.getTransactionCount(fromAccount).then((nonce) => {
               const data = contractInstance.methods.mint(receiptAccount, web3.utils.toWei(amount.toString(), 'ether')).encodeABI();
               const tx = {
                 nonce: nonce,
@@ -69,7 +69,7 @@ async function executeQuery() {
               }).catch((error) => {
                 reject(`Failed to mint tokens: ${error}`);
               });
-            });*/
+            });
             resolve(); // レコードの処理が完了したことを通知
           });
         });
