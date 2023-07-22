@@ -33,9 +33,11 @@ async function executeQuery() {
           connection.query(`SELECT * FROM Users WHERE user = '${aRecordKey}'`, async function (error, results, fields) {
             if (error) reject(error);
 
+            const bRecord = [];
+
             // Usersテーブルに存在する場合の処理
             if (results.length > 0) {
-              const bRecord = results[0];
+              bRecord = results[0];
               const receiptAccount = bRecord.wallet;
               console.log(receiptAccount + "に処理を行います。");
             } else {
@@ -64,7 +66,13 @@ async function executeQuery() {
               web3.eth.accounts.signTransaction(tx, fromAccountPVKey).then((signedTx) => {
                 web3.eth.sendSignedTransaction(signedTx.rawTransaction).on('receipt', (receipt) => {
                   console.log(`Transaction hash: ${receipt.transactionHash}`);
-                  resolve();
+
+                  // tokenFlg更新
+                  updateTokenFlag(bRecord.postId).then(() => {
+                    resolve();
+                  }).catch((error) => {
+                    reject(`Failed to update tokenFlg: ${error}`);
+                  });
                 });
               }).catch((error) => {
                 reject(`Failed to mint tokens: ${error}`);
@@ -79,6 +87,15 @@ async function executeQuery() {
   });
 }
 
+// tokenFlg更新
+async function updateTokenFlag(recordId) {
+  return new Promise((resolve, reject) => {
+    connection.query(`UPDATE PostMessage SET tokenFlg = 1 WHERE id = ${recordId}`, function (error, results, fields) {
+      if (error) reject(error);
+      resolve();
+    });
+  });
+}
 // 非同期関数を呼び出し、完了後に接続を終了する
 executeQuery()
   .then(() => {
