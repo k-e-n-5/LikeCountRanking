@@ -1,13 +1,12 @@
 #!/bin/bash
 
 # CSVファイルのパスを指定する
-sourceFile="../csv/test.csv"
+sourceFile="../csv/TeamsLikeCount.csv"
 tmpFile="../csv/tmp.csv"
 
 # MySQLデータベースの接続情報を指定する
 mysql_user="root"
 mysql_password="password"
-#mysql_host="localhost"
 mysql_database="dbtest"
 
 # mysql自動接続用に一時的に環境変数に追加する
@@ -33,12 +32,12 @@ while read -r line; do
   address=${fields[2]}
   content=${fields[3]}
   let likeCount=${fields[4]}
-  postDate=${fields[5]}
+  let tokenFlg=${fields[5]}
+  postDate=${fields[6]}
 
   # データベースに登録する
-  #mysql -u"$mysql_user" -p"$mysql_password" -h"$mysql_host" -D"$mysql_database" \
   mysql -u $mysql_user -D $mysql_database \
-  -e "INSERT INTO PostMessage (postId, postUser, address, content, likeCount, postDate) VALUES ($postId, '$postUser', '$address' , '$content', $likeCount, '$postDate')"
+  -e "INSERT INTO PostMessage (postId, postUser, address, content, likeCount, tokenFlg, postDate) VALUES ($postId, '$postUser', '$address' , '$content', $likeCount, '$tokenFlg', '$postDate')"
 
 done < $tmpFile
 

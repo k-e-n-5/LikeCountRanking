@@ -8,14 +8,13 @@ const connection = mysql.createConnection({
 });
 
 async function createAccount(user) {
-  //const account = web3.eth.accounts.create();
-  //console.log(account.address); // 作成されたアカウントのアドレス
-  //console.log(account.privateKey); // 作成されたアカウントの秘密鍵
+  const account = web3.eth.accounts.create();
+  console.log(account.address); // 作成されたアカウントのアドレス
+  console.log(account.privateKey); // 作成されたアカウントの秘密鍵
 
   try {
     // 非同期処理を実行するためにPromiseを使用する
     return new Promise((resolve, reject) => {
-      //const query = `INSERT INTO users (username) VALUES ('${user}')`;
       const query = `INSERT INTO Users VALUES ('${user}','TEST','test')`;
       connection.query(query, (error, results, fields) => {
         if (error) {
